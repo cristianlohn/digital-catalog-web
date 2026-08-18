@@ -29,15 +29,32 @@ export default function Footer() {
   }, []);
 
   // Formata o número (ex: 554784251082) para exibição visual (47) 98425-1082
-  const formatPhoneNumber = (num?: string) => {
-    if (!num) return '(47) 98425-1082';
-    const clean = num.replace(/\D/g, '');
-    const local = clean.startsWith('55') && clean.length > 10 ? clean.slice(2) : clean;
-    if (local.length === 11) {
-      return `(${local.slice(0, 2)}) ${local.slice(2, 7)}-${local.slice(7)}`;
-    }
-    return local;
-  };
+  // Formata e adiciona o '9' automaticamente se o número tiver apenas 10 dígitos
+const formatPhoneNumber = (num?: string) => {
+  if (!num) return '';
+
+  // 1. Limpa tudo e deixa apenas os números
+  let clean = num.replace(/\D/g, '');
+
+  // 2. Remove o DDI '55' do Brasil se ele tiver sido digitado
+  if (clean.startsWith('55') && clean.length > 10) {
+    clean = clean.slice(2);
+  }
+
+  // 3. REGRA DO 9: Se o número tem 10 dígitos (DDD + 8 dígitos), injeta o '9' na frente do número
+  if (clean.length === 10) {
+    const ddd = clean.slice(0, 2);
+    const numeroSemNove = clean.slice(2);
+    clean = `${ddd}9${numeroSemNove}`; // Transforma em 11 dígitos
+  }
+
+  // 4. Aplica a máscara bonita no padrão (XX) 9XXXX-XXXX
+  if (clean.length === 11) {
+    return `(${clean.slice(0, 2)}) ${clean.slice(2, 7)}-${clean.slice(7)}`;
+  }
+
+  return clean;
+};
 
   const whatsappRaw = settings?.whatsappNumber?.replace(/\D/g, '') || '554784251082';
 
