@@ -36,5 +36,12 @@ export const settings = defineType({
       description: 'Exemplo: Joinville, SC',
       type: 'string',
     }),
+    defineField({
+      name: 'adminEmails',
+      title: 'E-mails dos Administradores',
+      description: 'Adicione os e-mails (que fazem login na loja) que terão acesso ao botão do Painel Admin.',
+      type: 'array',
+      of: [{ type: 'string' }],
+    },)
   ],
 });

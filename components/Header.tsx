@@ -1,21 +1,46 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { SignInButton, Show, UserButton } from '@clerk/nextjs';
+import { SignInButton, Show, UserButton, useUser } from '@clerk/nextjs';
 import { useCartStore } from '@/store/cartStore';
+import { client } from '@/sanity/lib/client'; // Importante para buscar do Sanity
 
 export default function Header() {
     const { items, openCart } = useCartStore();
     const totalItems = items.reduce((acc, item) => acc + item.quantity, 0);
     
-    // --- NOVO: Sistema de Busca ---
+    // --- AUTENTICAÇÃO E ADMIN DINÂMICO VIA SANITY ---
+    const { user, isLoaded } = useUser();
+    const [adminEmails, setAdminEmails] = useState<string[]>([]);
+    
+    // Busca os e-mails cadastrados no painel do Sanity
+    useEffect(() => {
+        async function fetchAdmins() {
+            try {
+                const settings = await client.fetch(`*[_type == "settings"][0]{ adminEmails }`);
+                if (settings?.adminEmails) {
+                    setAdminEmails(settings.adminEmails);
+                }
+            } catch (error) {
+                console.error('Erro ao buscar administradores no Sanity:', error);
+            }
+        }
+        fetchAdmins();
+    }, []);
+    
+    const userEmail = user?.primaryEmailAddress?.emailAddress;
+    // O botão só aparece se o usuário estiver logado e o e-mail dele estiver cadastrado no Sanity
+    const isAdmin = userEmail && adminEmails.includes(userEmail);
+    // ------------------------------
+
+    // --- Sistema de Busca ---
     const [searchTerm, setSearchTerm] = useState('');
     const router = useRouter();
 
     const handleSearch = (e: React.FormEvent) => {
-        e.preventDefault(); // Evita que a página recarregue do zero
+        e.preventDefault();
         if (searchTerm.trim()) {
             router.push(`/busca?q=${encodeURIComponent(searchTerm.trim())}`);
         }
@@ -45,7 +70,7 @@ export default function Header() {
                         </nav>
                     </div>
 
-                    {/* 2. BARRA DE PESQUISA (Desktop) - AGORA É UM FORM */}
+                    {/* 2. BARRA DE PESQUISA (Desktop) */}
                     <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-sm xl:max-w-md relative group">
                         <input
                             type="text"
@@ -62,7 +87,7 @@ export default function Header() {
                         </button>
                     </form>
 
-                    {/* 3. AÇÕES (Carrinho + Login) */}
+                    {/* 3. AÇÕES (Carrinho + Login + Admin) */}
                     <div className="flex items-center gap-4 sm:gap-6">
                         {/* Ícone do Carrinho */}
                         <button onClick={openCart} className="relative text-gray-600 hover:text-blue-600 transition-colors p-1">
@@ -80,8 +105,19 @@ export default function Header() {
 
                         <div className="hidden sm:block w-px h-8 bg-gray-200"></div>
 
-                        {/* 4. AUTENTICAÇÃO CLERK */}
-                        <div className="flex items-center">
+                        {/* 4. AUTENTICAÇÃO CLERK E BOTÃO ADMIN */}
+                        <div className="flex items-center gap-3">
+                            
+                            {/* Só exibe se o e-mail bater com a lista cadastrada no Sanity */}
+                            {isLoaded && isAdmin && (
+                                <Link 
+                                    href="/studio"
+                                    className="hidden sm:flex bg-zinc-900 text-white font-bold text-[11px] uppercase tracking-wider px-3 py-2 rounded-lg hover:bg-zinc-800 transition-colors items-center gap-1.5 shadow-sm"
+                                >
+                                    <span>⚙️</span> Admin
+                                </Link>
+                            )}
+
                             <Show when="signed-out">
                                 <SignInButton mode="modal">
                                     <button className="bg-zinc-900 hover:bg-zinc-800 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-all shadow-md shadow-zinc-200 whitespace-nowrap">
@@ -89,6 +125,7 @@ export default function Header() {
                                     </button>
                                 </SignInButton>
                             </Show>
+                            
                             <Show when="signed-in">
                                 <UserButton appearance={{ elements: { avatarBox: "w-10 h-10 border-2 border-gray-100 shadow-sm hover:border-blue-200 transition-colors" } }} />
                             </Show>
@@ -107,7 +144,7 @@ export default function Header() {
                     <Link href="/categoria/acessorios" className="hover:text-blue-600 transition-colors">Acessórios</Link>
                 </nav>
 
-                {/* Barra de Pesquisa Mobile - AGORA É UM FORM */}
+                {/* Barra de Pesquisa Mobile */}
                 <div className="p-3 md:hidden">
                     <form onSubmit={handleSearch} className="relative">
                         <input
