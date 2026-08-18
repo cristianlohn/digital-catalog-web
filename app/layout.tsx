@@ -13,16 +13,26 @@ const inter = Inter({ subsets: ["latin"] });
 
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://digital-catalog-web-bay.vercel.app'),
+
   title: 'TF Store | Eletrônicos Premium Novos & Seminovos',
   description: 'Sua loja de confiança para iPhones novos e seminovos, Apple Watch, Smartwatches e Acessórios com garantia e pronta entrega.',
   keywords: ['iPhone', 'Apple Watch', 'Seminovos', 'Eletrônicos', 'Joinville', 'TF Store'],
   openGraph: {
     title: 'TF Store | Eletrônicos Premium',
     description: 'Encontre iPhones, Smartwatches e Acessórios com garantia e envio rápido.',
-    url: 'https://tfstore.com.br', // Substitua pelo seu domínio oficial quando tiver
+    url: 'https://digital-catalog-web-bay.vercel.app', // Substitua pelo seu domínio oficial quando tiver
     siteName: 'TF Store',
     locale: 'pt_BR',
     type: 'website',
+    images: [
+      {
+        url: '/opengraph-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'TF Store - Eletrônicos Premium',
+      },
+    ],
   },
 };
 
