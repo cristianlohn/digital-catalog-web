@@ -1,6 +1,46 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { client } from '@/sanity/lib/client';
+
+interface StoreSettings {
+  whatsappNumber?: string;
+  instagramUrl?: string;
+  contactEmail?: string;
+  storeAddress?: string;
+}
 
 export default function Footer() {
+  const [settings, setSettings] = useState<StoreSettings | null>(null);
+
+  useEffect(() => {
+    async function fetchSettings() {
+      try {
+        const data = await client.fetch(
+          `*[_type == "settings"][0]{ whatsappNumber, instagramUrl, contactEmail, storeAddress }`
+        );
+        setSettings(data);
+      } catch (error) {
+        console.error('Erro ao carregar configurações no Footer:', error);
+      }
+    }
+    fetchSettings();
+  }, []);
+
+  // Formata o número (ex: 554784251082) para exibição visual (47) 98425-1082
+  const formatPhoneNumber = (num?: string) => {
+    if (!num) return '(47) 98425-1082';
+    const clean = num.replace(/\D/g, '');
+    const local = clean.startsWith('55') && clean.length > 10 ? clean.slice(2) : clean;
+    if (local.length === 11) {
+      return `(${local.slice(0, 2)}) ${local.slice(2, 7)}-${local.slice(7)}`;
+    }
+    return local;
+  };
+
+  const whatsappRaw = settings?.whatsappNumber?.replace(/\D/g, '') || '554784251082';
+
   return (
     <footer className="bg-zinc-950 text-gray-400 pt-16 pb-8 border-t border-zinc-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -16,12 +56,26 @@ export default function Footer() {
             <p className="text-sm leading-relaxed mb-6">
               A sua loja de confiança para eletrônicos premium. Aparelhos novos e seminovos rigorosamente testados, com garantia e procedência.
             </p>
-            {/* Redes Sociais */}
+            {/* Redes Sociais Dinâmicas */}
             <div className="flex items-center gap-4">
-              <a href="#" className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all">
-                <span className="text-xl">📸</span>
-              </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all">
+              {settings?.instagramUrl && (
+                <a 
+                  href={settings.instagramUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all"
+                  aria-label="Instagram"
+                >
+                  <span className="text-xl">📸</span>
+                </a>
+              )}
+              <a 
+                href={`https://wa.me/${whatsappRaw}`} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all"
+                aria-label="WhatsApp"
+              >
                 <span className="text-xl">💬</span>
               </a>
             </div>
@@ -49,21 +103,36 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Coluna 4: Contato Segura */}
+          {/* Coluna 4: Contato Dinâmico */}
           <div>
             <h3 className="text-white font-bold text-base mb-5 uppercase tracking-wider">Atendimento</h3>
             <ul className="space-y-4 text-sm">
               <li className="flex items-start gap-3">
                 <span className="text-blue-500 text-lg mt-0.5">📍</span>
-                <span>Joinville, SC<br/>Atendimento online para todo Brasil</span>
+                <span>
+                  {settings?.storeAddress || 'Joinville, SC'}
+                  <br/>Atendimento online para todo Brasil
+                </span>
               </li>
               <li className="flex items-center gap-3">
                 <span className="text-emerald-500 text-lg">📱</span>
-                <span>(47) 99999-9999</span>
+                <a 
+                  href={`https://wa.me/${whatsappRaw}`} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-emerald-400 transition-colors"
+                >
+                  {formatPhoneNumber(settings?.whatsappNumber)}
+                </a>
               </li>
               <li className="flex items-center gap-3">
                 <span className="text-blue-500 text-lg">✉️</span>
-                <span>contato@tfstore.com.br</span>
+                <a 
+                  href={`mailto:${settings?.contactEmail || 'contato@tfstore.com.br'}`} 
+                  className="hover:text-white transition-colors"
+                >
+                  {settings?.contactEmail || 'contato@tfstore.com.br'}
+                </a>
               </li>
             </ul>
           </div>
