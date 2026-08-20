@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { client } from '@/sanity/lib/client';
+import { FaPix, FaCcVisa, FaCcMastercard } from 'react-icons/fa6';
 
 interface StoreSettings {
   whatsappNumber?: string;
@@ -156,13 +157,53 @@ const formatPhoneNumber = (num?: string) => {
 
         </div>
 
-        {/* BARRA INFERIOR (Copyright e Pagamentos) */}
-        <div className="pt-8 border-t border-zinc-900 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-500 text-center md:text-left">
-          <p>© {new Date().getFullYear()} TF Store. Todos os direitos reservados.</p>
-          <div className="flex items-center gap-2">
-            <span className="bg-zinc-900 px-3 py-1.5 rounded-md font-medium">PIX</span>
-            <span className="bg-zinc-900 px-3 py-1.5 rounded-md font-medium">VISA</span>
-            <span className="bg-zinc-900 px-3 py-1.5 rounded-md font-medium">MASTERCARD</span>
+        {/* BARRA INFERIOR (Segurança, Pagamentos e Copyright) */}
+        <div className="pt-8 border-t border-zinc-900">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
+            
+            {/* Selos de Segurança */}
+            <div className="flex flex-col items-center md:items-start gap-2">
+              <span className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Segurança Garantida</span>
+              <div className="flex flex-wrap justify-center md:justify-start items-center gap-3">
+                <div className="flex items-center gap-1.5 text-xs font-medium text-emerald-500 bg-emerald-500/10 px-3 py-1.5 rounded-md border border-emerald-500/20">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                  Site Seguro SSL
+                </div>
+                <div className="flex items-center gap-1.5 text-xs font-medium text-blue-400 bg-blue-500/10 px-3 py-1.5 rounded-md border border-blue-500/20">
+                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                  Navegação Segura
+                </div>
+              </div>
+            </div>
+
+            {/* Formas de Pagamento */}
+            <div className="flex flex-col items-center md:items-end gap-2">
+              <span className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Formas de Pagamento</span>
+              <div className="flex items-center gap-2">
+                {/* PIX */}
+                <div className="bg-white px-2.5 py-1.5 rounded-md flex items-center justify-center h-8 shadow-sm text-[#32BCAD] gap-1">
+                  <FaPix className="text-base" />
+                  <span className="font-bold text-[14px] lowercase tracking-tight">pix</span>
+                </div>
+                {/* VISA */}
+                <div className="bg-white px-3 py-1.5 rounded-md flex items-center justify-center h-8 shadow-sm text-[#1434CB]">
+                  <FaCcVisa className="text-[26px]" />
+                </div>
+                {/* MASTERCARD */}
+                <div className="bg-white px-3 py-1.5 rounded-md flex items-center justify-center h-8 shadow-sm text-[#FF5F00]">
+                  <FaCcMastercard className="text-[26px]" />
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div className="flex flex-col items-center justify-center text-xs text-zinc-600 text-center">
+            <p>© {new Date().getFullYear()} TF Store. Todos os direitos reservados.</p>
           </div>
         </div>
         
