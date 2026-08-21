@@ -59,7 +59,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
             {products.map((product: any) => {
               const productName = product.title || product.name || 'Produto';
-              const productImage = product.image ? urlFor(product.image).url() : (product.images?.[0] ? urlFor(product.images[0]).url() : null);
+              const productImage = product.image ? urlFor(product.image).auto('format').fit('max').width(800).quality(80).url() : (product.images?.[0] ? urlFor(product.images[0]).auto('format').fit('max').width(800).quality(80).url() : null);
 
               return (
                 <Link 

@@ -7,6 +7,7 @@ import { client } from '@/sanity/lib/client';
 import { urlFor } from '@/sanity/lib/image';
 import { useCartStore } from '@/store/cartStore';
 import ReviewSection from '@/components/ReviewSection';
+import { FaWhatsapp, FaCartShopping, FaShieldHalved, FaTruckFast, FaCreditCard } from 'react-icons/fa6';
 
 interface ProductPageProps {
     params: Promise<{ slug: string }>;
@@ -59,7 +60,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                 // Seleciona a primeira imagem por padrão
                 const rawImages = data?.images && data.images.length > 0 ? data.images : (data?.image ? [data.image] : []);
                 if (rawImages.length > 0) {
-                    setSelectedImage(urlFor(rawImages[0]).url());
+                    setSelectedImage(urlFor(rawImages[0]).auto('format').fit('max').width(800).quality(80).url());
                 }
             } catch (error) {
                 console.error("Erro ao buscar o produto:", error);
@@ -192,23 +193,21 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                                 <span className="text-gray-400 font-medium text-sm">Sem foto disponível</span>
                             )}
 
-                            {/* BADGE DE BATERIA */}
+                            {/* BADGE DE BATERIA PREMIUM */}
                             {product.battery !== undefined && product.battery !== null && (
-                                <div className="absolute top-4 left-4 bg-emerald-100/90 backdrop-blur-md text-emerald-800 text-xs font-extrabold px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1.5 border border-emerald-300/50 z-10">
-                                    <span>🔋</span> Bateria {product.battery}%
+                                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md text-zinc-800 text-xs font-bold px-3.5 py-2 rounded-full shadow-md flex items-center gap-2 border border-white/50 z-10">
+                                    <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-pulse"></span>
+                                    {product.battery}% Saúde
                                 </div>
                             )}
 
-                            {/* BADGE DE PROMOÇÃO (Foguinho) */}
+                            {/* TAG DE PROMOÇÃO PREMIUM */}
                             {product.isPromo && (
                                 <div
-                                    className="absolute top-3 right-3 z-10 flex items-center justify-center w-12 h-12 drop-shadow-md hover:scale-110 transition-transform cursor-default"
+                                    className="absolute top-4 right-4 z-10 bg-gradient-to-tr from-blue-600 to-indigo-500 text-white text-[11px] font-black uppercase tracking-widest px-4 py-2 rounded-full shadow-lg shadow-blue-500/30 border border-blue-400/50 flex items-center gap-1.5"
                                     title="Produto em Promoção!"
                                 >
-                                    <span className="text-5xl drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]">🔥</span>
-                                    <span className="absolute text-xs font-black text-white mt-3.5 ml-[1px] drop-shadow-sm">
-                                        %
-                                    </span>
+                                    <span className="text-sm -mt-0.5">✨</span> OFERTA
                                 </div>
                             )}
                         </div>
@@ -217,7 +216,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                         {allImages.length > 1 && (
                             <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-none">
                                 {allImages.map((imgItem: any, index: number) => {
-                                    const imgUrl = urlFor(imgItem).url();
+                                    const imgUrl = urlFor(imgItem).auto('format').fit('max').width(800).quality(80).url();
                                     const isSelected = selectedImage === imgUrl;
                                     return (
                                         <button
@@ -296,7 +295,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
 
                         {/* BOTÕES DE AÇÃO E DICAS DE SEGURANÇA */}
                         <div className="mt-6 border-t border-gray-100 pt-6">
-                            {/* Botão de Adicionar ao Carrinho (Devolvido! 🛒) */}
+                            {/* Botão de Adicionar ao Carrinho */}
                             <button
                                 onClick={() => {
                                     addItem({
@@ -306,41 +305,47 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                                         image: selectedImage || '',
                                         quantity: 1,
                                     });
-                                    // Um alerta simples por enquanto (vamos melhorar isso depois)
                                     openCart();
                                 }}
-                                className="w-full bg-zinc-900 hover:bg-zinc-800 text-white font-black py-4 px-6 rounded-2xl flex items-center justify-center gap-3 text-base shadow-lg shadow-zinc-900/20 hover:shadow-zinc-900/30 transition-all"
+                                className="w-full bg-zinc-900 hover:bg-zinc-800 hover:-translate-y-1 text-white font-black py-4 px-6 rounded-2xl flex items-center justify-center gap-3 text-lg shadow-xl shadow-zinc-900/20 hover:shadow-2xl hover:shadow-zinc-900/40 transition-all duration-300 mb-4"
                             >
-                                <span className="text-2xl">🛒</span>
+                                <FaCartShopping className="text-xl" />
                                 Adicionar ao Carrinho
                             </button>
+                            
                             {/* Botão Principal de Comprar no WhatsApp */}
                             <a
                                 href={whatsappUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-4 px-6 rounded-2xl flex items-center justify-center gap-3 text-base shadow-lg shadow-emerald-600/20 hover:shadow-emerald-600/30 transition-all mb-4 text-center"
+                                className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 hover:-translate-y-1 text-white font-black py-4 px-6 rounded-2xl flex items-center justify-center gap-3 text-lg shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all duration-300 mb-4"
                             >
-                                <span className="text-2xl">💬</span>
+                                <FaWhatsapp className="text-2xl" />
                                 Comprar pelo WhatsApp
                             </a>
 
                             {/* CARDS DE GARANTIA E BENEFÍCIOS */}
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center mt-6">
-                                <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
-                                    <div className="text-xl mb-1">🛡️</div>
-                                    <h4 className="text-xs font-bold text-gray-900">100% Original</h4>
-                                    <p className="text-[10px] text-gray-500 mt-0.5">Aparelhos testados e revisados</p>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center mt-8">
+                                <div className="p-4 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow flex flex-col items-center">
+                                    <div className="text-blue-600 mb-2 bg-blue-50 p-2.5 rounded-full">
+                                        <FaShieldHalved className="text-xl" />
+                                    </div>
+                                    <h4 className="text-xs font-black text-gray-900 uppercase tracking-wider">100% Original</h4>
+                                    <p className="text-[11px] text-gray-500 mt-1 font-medium">Aparelhos revisados</p>
                                 </div>
-                                <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
-                                    <div className="text-xl mb-1">🚚</div>
-                                    <h4 className="text-xs font-bold text-gray-900">Envio Seguro</h4>
-                                    <p className="text-[10px] text-gray-500 mt-0.5">Entrega rápida para todo Brasil</p>
+                                <div className="p-4 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow flex flex-col items-center">
+                                    <div className="text-blue-600 mb-2 bg-blue-50 p-2.5 rounded-full">
+                                        <FaTruckFast className="text-xl" />
+                                    </div>
+                                    <h4 className="text-xs font-black text-gray-900 uppercase tracking-wider">Envio Seguro</h4>
+                                    <p className="text-[11px] text-gray-500 mt-1 font-medium">Entrega para todo Brasil</p>
                                 </div>
-                                <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
-                                    <div className="text-xl mb-1">💳</div>
-                                    <h4 className="text-xs font-bold text-gray-900">Pagamento Fácil</h4>
-                                    <p className="text-[10px] text-gray-500 mt-0.5">Pix ou Cartão em até 18x</p>
+                                <div className="p-4 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow flex flex-col items-center">
+                                    <div className="text-blue-600 mb-2 bg-blue-50 p-2.5 rounded-full">
+                                        <FaCreditCard className="text-xl" />
+                                    </div>
+                                    <h4 className="text-xs font-black text-gray-900 uppercase tracking-wider">Pagamento Fácil</h4>
+                                    <p className="text-[11px] text-gray-500 mt-1 font-medium">Pix ou Cartão em 18x</p>
                                 </div>
                             </div>
 

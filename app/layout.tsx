@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Outfit } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -9,7 +9,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { ptBR } from "@clerk/localizations";
 import Cart from "@/components/Cart";
 
-const inter = Inter({ subsets: ["latin"] });
+const outfit = Outfit({ subsets: ["latin"] });
 
 
 export const metadata: Metadata = {
@@ -53,7 +53,7 @@ export default function RootLayout({
       }}
     >
       <html lang="pt-BR">
-        <body className={inter.className}>
+        <body className={outfit.className}>
           <Header />
           <Cart />
           <main className="min-h-screen">{children}</main>
